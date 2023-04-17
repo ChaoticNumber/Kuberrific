@@ -46,20 +46,30 @@ fi
 # Convert image to qcow2 format
 qemu-img convert -f raw -O qcow2 $SOURCE_IMAGE $TARGET_IMAGE
 
-# Start VM
-qemu-system-x86_64 \
--m $RAM \
--smp $CPUS \
--drive file=$TARGET_IMAGE,if=virtio \
--drive file=/dev/zero,if=virtio,format=raw,id=swap \
--device virtio-blk,drive=swap \
--device virtio-net,netdev=net0 \
--netdev user,id=net0 \
--vga virtio \
--display gtk,gl=on \
--usb \
--cpu host \
--soundhw hda \
--device intel-hda
+# Start VM with cloud-init
+if [ -n "$CLOUD_INIT_FILE" ]; then
+    qemu-system-x86_64 \
+        -m $RAM \
+        -smp $CPUS \
+        -drive file=$TARGET_IMAGE,if=virtio \
+        -initrd $CLOUD_INIT_FILE \
+        -append "console=ttyS0 cloud-config-url=http://example.com/my-cloud-config.yaml" \
+        -vga virtio \
+        -display vnc=:0 \
+        -cpu qemu64
+# Start VM without cloud-init
+else
+    qemu-system-x86_64 \
+        -m $RAM \
+        -smp $CPUS \
+        -drive file=$TARGET_IMAGE,if=virtio \
+        -drive file=/dev/zero,if=virtio,format=raw,id=swap,if=none \
+        -device virtio-blk,drive=swap \
+        -device virtio-net,netdev=net0 \
+        -netdev user,id=net0 \
+        -vga virtio \
+        -display vnc=:0 \
+        -cpu qemu64
+fi
 
 # End of script
