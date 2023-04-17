@@ -1,0 +1,51 @@
+#cloud-config
+
+# Set up disk partitions and filesystems
+disk_setup:
+  partitions:
+    - label: root
+      number: 1
+      size: 100%
+      device: /dev/vda
+
+# Mount the root filesystem
+mounts:
+  - ["/dev/vda1", "/"]
+
+# Set the timezone to UTC
+timezone: UTC
+
+# Set the hostname
+hostname: k8s-control-plane
+
+# Configure the network interfaces
+network:
+  version: 2
+  ethernets:
+    eth0:
+      dhcp4: true
+
+# Add SSH keys for the default user
+ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDyRL7eYwtQ2lEFbB5CoJ/VE4WumflVZus8M2vbl3uYVeeDri8/XqQJbvd+i8f/hDKL9ROYgTdyEvrsAzI+4Ep/ZjMusE4eV1cmrorXoCxpqRS7lZNG1KLdiWb8Ab4DOSaSxb9sKRwNH054TkO48Et7+Cz2q+7z9Z0Y5uFP6nT0hT7KQ2Ez3YhfS0KQRJEqsyS1AMs8yu1A5wSHcnFZuC2Khu7y0lnPiNpGNgYrOBL3FtJrKYJi/d+G/3moWaQhjvDwVwfxttMwyt3JVEhBbDq99rQDFJNPFMq7MfDFnjbk+aFoCrk4WKQExqhCzwcBw+lHnQYo1UZU+RWvg6SgklEmnbMsVXARbkC2GEYmOy4SJ6NmcJc6FYbxrxqXqD9uJfxTl86OHLDVJXDvBO2uj805RfcZBrN8DKa5TcXVKMNVbbM+cbM993A9SkbVCPY3Kh7ZTjqKa7XMO6rsgmThwsgwYLns0fyUBUVtUHw/j8RqVcGhJFlTCBEwY7DRTu0AflYy4AHDwiWIuPYpXAiDxyo8fZZ3cBzdQC7FmQBKIW045ONLFrkvdPsP1jvAVYABCbnqtid1lrK1/dlPHVMVypPiyZGvUGFHRbglymf4J8K+Q3ACehjIPveF0/jJPGVxJDCLcmqx3cTk5SJbw49CyS65iKjCZNLhMAZln9TPc51myw== roland.hetler@gmail.com
+
+coreos:
+  etcd2:
+    # Generate a new unique name for the etcd cluster
+    name: my-k8s-etcd-$private_ipv4
+    advertise_client_urls: http://$private_ipv4:2379,http://$private_ipv4:4001
+    initial_advertise_peer_urls: http://$private_ipv4:2380
+    listen_client_urls: http://0.0.0.0:2379,http://0.0.0.0:4001
+    listen_peer_urls: http://$private_ipv4:2380
+  units:
+    # Enable the kubelet service
+    - name: kubelet.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=kubelet
+        After=docker.service
+        Requires=docker.service
+
+
