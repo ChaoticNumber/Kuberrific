@@ -6,6 +6,7 @@ CPUS=2
 STORAGE=10 # gigabytes
 SOURCE_IMAGE=/home/homer/w/images/ubuntu-22.04-server-cloudimg-amd64.img
 TARGET_IMAGE=/home/homer/vm/ubnt-image2.qcow2
+ETCD_IMAGE=/home/homer/vm/etcd.qcow2
 CLOUD_INIT_FILE=""
 
 # Usage message
