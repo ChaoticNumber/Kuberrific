@@ -6,6 +6,7 @@ CPUS=2
 STORAGE=10 # gigabytes
 SOURCE_IMAGE=/path/to/source-image.img
 TARGET_IMAGE=/path/to/target-image.qcow2
+CLOUD_INIT_FILE=""
 
 # Usage message
 usage() {
