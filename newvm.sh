@@ -31,10 +31,16 @@ if [ ! -f "$SOURCE_IMAGE" ]; then
     exit 1
 fi
 
-# Check if the target image file already exists
-if [ -f "$TARGET_IMAGE" ]; then
-    echo "Error: Target image file already exists"
-    exit 1
+# Check if the target image file already exists and append a sequential number if it does
+counter=1
+while [ -f "$TARGET_IMAGE" ]; do
+    TARGET_IMAGE="${TARGET_IMAGE%.*}_$counter.qcow2"
+    ((counter++))
+done
+
+# Echo message if a new file was created
+if [ $counter -gt 1 ]; then
+    echo "Target image file already exists. New file $TARGET_IMAGE has been created."
 fi
 
 # Convert image to qcow2 format
