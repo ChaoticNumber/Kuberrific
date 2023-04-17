@@ -69,5 +69,6 @@ I am spending the last part of the day reading up on worker node details such as
 
     Day 4 
 
-
-
+On this day the main focus is to simply troubleshoot the qemu script, to make sure its properly polished, so I don't have to spend too much time worrying about every issue. 
+The first thing that came to mind was being able to pass cloud-init variables into the image, this was added to the script by adding the variable and defining a condition if we are running the script with or without a cloud-init file.
+Second thing, more of an annoyance than anything else, added checking for existing files and appending the name so the script does not hang every time there is an existing file. In the future, adding the functionality of the VM cleaning up after itself would probably be better. [ TODO ]
