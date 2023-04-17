@@ -44,8 +44,13 @@ if [ $counter -gt 1 ]; then
     echo "Target image file already exists. New file $TARGET_IMAGE has been created."
 fi
 
-# Convert image to qcow2 format
-qemu-img convert -f raw -O qcow2 $SOURCE_IMAGE $TARGET_IMAGE
+# Convert image to qcow2 format if necessary
+if [[ $SOURCE_IMAGE == *".qcow2" ]]; then
+    cp $SOURCE_IMAGE $TARGET_IMAGE
+else
+    qemu-img convert -f raw -O qcow2 $SOURCE_IMAGE $TARGET_IMAGE
+fi
+
 
 # Start VM with cloud-init
 if [ -n "$CLOUD_INIT_FILE" ]; then
