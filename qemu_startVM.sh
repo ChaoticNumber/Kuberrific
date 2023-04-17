@@ -4,24 +4,25 @@
 RAM=1024 # megabytes
 CPUS=2
 STORAGE=10 # gigabytes
-SOURCE_IMAGE=/path/to/source-image.img
-TARGET_IMAGE=/path/to/target-image.qcow2
+SOURCE_IMAGE=/home/homer/w/images/ubuntu-22.04-server-cloudimg-amd64.img
+TARGET_IMAGE=/home/homer/vm/ubnt-image2.qcow2
 CLOUD_INIT_FILE=""
 
 # Usage message
 usage() {
-    echo "Usage: $0 [-r RAM] [-c CPUS] [-s STORAGE] [-i SOURCE_IMAGE] [-o TARGET_IMAGE]"
+    echo "Usage: $0 [-r RAM] [-c CPUS] [-s STORAGE] [-i SOURCE_IMAGE] [-o TARGET_IMAGE] [-u CLOUD_INIT_FILE]"
     exit 1
 }
 
 # Parse command line arguments
-while getopts ":r:c:s:i:o:" opt; do
+while getopts ":r:c:s:i:o:u:" opt; do
     case $opt in
         r) RAM="$OPTARG" ;;
         c) CPUS="$OPTARG" ;;
         s) STORAGE="$OPTARG" ;;
         i) SOURCE_IMAGE="$OPTARG" ;;
         o) TARGET_IMAGE="$OPTARG" ;;
+        u) CLOUD_INIT_FILE="$OPTARG" ;;
         *) usage ;;
     esac
 done
@@ -39,16 +40,18 @@ while [ -f "$TARGET_IMAGE" ]; do
     ((counter++))
 done
 
+# Convert image to qcow2 format if necessary
+if [[ $SOURCE_IMAGE == *".qcow2" ]]; then
+    if [ ! -f "$TARGET_IMAGE" ]; then
+        cp $SOURCE_IMAGE $TARGET_IMAGE
+    fi
+else
+    qemu-img convert -f raw -O qcow2 $SOURCE_IMAGE $TARGET_IMAGE
+fi
+
 # Echo message if a new file was created
 if [ $counter -gt 1 ]; then
     echo "Target image file already exists. New file $TARGET_IMAGE has been created."
-fi
-
-# Convert image to qcow2 format if necessary
-if [[ $SOURCE_IMAGE == *".qcow2" ]]; then
-    cp $SOURCE_IMAGE $TARGET_IMAGE
-else
-    qemu-img convert -f raw -O qcow2 $SOURCE_IMAGE $TARGET_IMAGE
 fi
 
 
