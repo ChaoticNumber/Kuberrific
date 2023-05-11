@@ -72,3 +72,13 @@ I am spending the last part of the day reading up on worker node details such as
 On this day the main focus is to simply troubleshoot the qemu script, to make sure its properly polished, so I don't have to spend too much time worrying about every issue. 
 The first thing that came to mind was being able to pass cloud-init variables into the image, this was added to the script by adding the variable and defining a condition if we are running the script with or without a cloud-init file.
 Second thing, more of an annoyance than anything else, added checking for existing files and appending the name so the script does not hang every time there is an existing file. In the future, adding the functionality of the VM cleaning up after itself would probably be better. [ TODO ]
+After (too) many iterations I managed to stand up the vm while passing the cloud-init into it. Unfortunately it took way too long for the value of what was learned. virt-install was used instead of the very basic qemu-system-x86_64 process. 
+
+    Day 5
+
+Its time to review what was learned in this 4 day sprint and if necessary, re-evaluate my learning process.
+
+As the goal for the first 4 days sprint was to gague the depth of my understanding of how kubernetes control planes operate, I will evaluate the sprint according to this goal. 
+
+Ok, first things first, the "what" was done and learned
+    - 

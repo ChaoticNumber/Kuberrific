@@ -15,7 +15,7 @@ usage() {
     exit 1
 }
 
-# Parse command line arguments
+# Parse command line arguments +
 while getopts ":r:c:s:i:o:u:" opt; do
     case $opt in
         r) RAM="$OPTARG" ;;
